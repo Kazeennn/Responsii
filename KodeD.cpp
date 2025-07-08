@@ -1,20 +1,37 @@
 #include <iostream>
 #include <fstream>
-#include <string>
-
 using namespace std;
 
 const int MAKS_TIKET = 100;
+const int PANJANG = 50;
 
 struct Tiket {
-    string namaPenumpang;
-    string maskapai;
-    string tujuan;
+    char namaPenumpang[PANJANG];
+    char maskapai[PANJANG];
+    char tujuan[PANJANG];
     int harga;
 };
 
 Tiket daftarTiket[MAKS_TIKET];
 int jumlahTiket = 0;
+
+void salinString(char* dest, const char* src) {
+    int i = 0;
+    while (src[i] != '\0') {
+        dest[i] = src[i];
+        i++;
+    }
+    dest[i] = '\0';
+}
+
+int bandingString(const char* a, const char* b) {
+    int i = 0;
+    while (a[i] != '\0' && b[i] != '\0') {
+        if (a[i] != b[i]) return a[i] - b[i];
+        i++;
+    }
+    return a[i] - b[i];
+}
 
 void tambahTiket() {
     if (jumlahTiket >= MAKS_TIKET) {
@@ -24,11 +41,11 @@ void tambahTiket() {
 
     cout << "Nama Penumpang: ";
     cin.ignore();
-    getline(cin, daftarTiket[jumlahTiket].namaPenumpang);
+    cin.getline(daftarTiket[jumlahTiket].namaPenumpang, PANJANG);
     cout << "Maskapai: ";
-    getline(cin, daftarTiket[jumlahTiket].maskapai);
+    cin.getline(daftarTiket[jumlahTiket].maskapai, PANJANG);
     cout << "Tujuan: ";
-    getline(cin, daftarTiket[jumlahTiket].tujuan);
+    cin.getline(daftarTiket[jumlahTiket].tujuan, PANJANG);
     cout << "Harga Tiket: ";
     cin >> daftarTiket[jumlahTiket].harga;
 
@@ -52,17 +69,18 @@ void tampilkanTiket() {
 }
 
 void pesanTiket() {
-    string maskapaiCari;
+    char maskapaiCari[PANJANG];
     int budget;
     cout << "Masukkan Maskapai: ";
     cin.ignore();
-    getline(cin, maskapaiCari);
+    cin.getline(maskapaiCari, PANJANG);
     cout << "Masukkan Budget Anda: ";
     cin >> budget;
 
     bool ditemukan = false;
     for (int i = 0; i < jumlahTiket; i++) {
-        if (daftarTiket[i].maskapai == maskapaiCari && daftarTiket[i].harga <= budget) {
+        if (bandingString(daftarTiket[i].maskapai, maskapaiCari) == 0 &&
+            daftarTiket[i].harga <= budget) {
             cout << "Tiket Tersedia: " << daftarTiket[i].namaPenumpang
                  << " | " << daftarTiket[i].tujuan
                  << " | Rp" << daftarTiket[i].harga << endl;
@@ -70,7 +88,8 @@ void pesanTiket() {
         }
     }
 
-    if (!ditemukan) cout << "Tiket tidak ditemukan sesuai kriteria.\n";
+    if (!ditemukan)
+        cout << "Tiket tidak ditemukan sesuai kriteria.\n";
 }
 
 void editTiket() {
@@ -87,11 +106,11 @@ void editTiket() {
     int i = index - 1;
     cout << "Edit Nama Penumpang (sebelumnya " << daftarTiket[i].namaPenumpang << "): ";
     cin.ignore();
-    getline(cin, daftarTiket[i].namaPenumpang);
+    cin.getline(daftarTiket[i].namaPenumpang, PANJANG);
     cout << "Edit Maskapai (sebelumnya " << daftarTiket[i].maskapai << "): ";
-    getline(cin, daftarTiket[i].maskapai);
+    cin.getline(daftarTiket[i].maskapai, PANJANG);
     cout << "Edit Tujuan (sebelumnya " << daftarTiket[i].tujuan << "): ";
-    getline(cin, daftarTiket[i].tujuan);
+    cin.getline(daftarTiket[i].tujuan, PANJANG);
     cout << "Edit Harga Tiket (sebelumnya Rp" << daftarTiket[i].harga << "): ";
     cin >> daftarTiket[i].harga;
 
@@ -158,3 +177,4 @@ int main() {
 
     return 0;
 }
+
