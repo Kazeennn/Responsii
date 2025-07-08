@@ -1,18 +1,38 @@
 #include <iostream>
 #include <fstream>
-#include <string>
 using namespace std;
 
 const int MAKS_MATKUL = 100;
+const int PANJANG_NAMA = 50;
 
 struct Matkul {
-    string nama;
+    char nama[PANJANG_NAMA];
     int sks;
     int nilai;
 };
 
 Matkul daftarMatkul[MAKS_MATKUL];
 int jumlahMatkul = 0;
+
+// Fungsi salin string (pengganti strcpy)
+void salinString(char* dest, const char* src) {
+    int i = 0;
+    while (src[i] != '\0') {
+        dest[i] = src[i];
+        i++;
+    }
+    dest[i] = '\0';
+}
+
+// Fungsi banding string (pengganti strcmp)
+int bandingkanString(const char* a, const char* b) {
+    int i = 0;
+    while (a[i] != '\0' && b[i] != '\0') {
+        if (a[i] != b[i]) return a[i] - b[i];
+        i++;
+    }
+    return a[i] - b[i];
+}
 
 void tambahMatkul() {
     if (jumlahMatkul >= MAKS_MATKUL) {
@@ -22,7 +42,7 @@ void tambahMatkul() {
 
     cout << "\nMasukkan nama matkul: ";
     cin.ignore();
-    getline(cin, daftarMatkul[jumlahMatkul].nama);
+    cin.getline(daftarMatkul[jumlahMatkul].nama, PANJANG_NAMA);
     cout << "Masukkan jumlah SKS: ";
     cin >> daftarMatkul[jumlahMatkul].sks;
     cout << "Masukkan nilai: ";
@@ -45,10 +65,13 @@ void hitungSPP() {
 void sortingNilai(bool ascending) {
     for (int i = 0; i < jumlahMatkul - 1; i++) {
         for (int j = i + 1; j < jumlahMatkul; j++) {
-            bool kondisi = ascending ? (daftarMatkul[i].nilai > daftarMatkul[j].nilai) :
-                                       (daftarMatkul[i].nilai < daftarMatkul[j].nilai);
+            bool kondisi = ascending
+                ? (daftarMatkul[i].nilai > daftarMatkul[j].nilai)
+                : (daftarMatkul[i].nilai < daftarMatkul[j].nilai);
             if (kondisi) {
-                swap(daftarMatkul[i], daftarMatkul[j]);
+                Matkul temp = daftarMatkul[i];
+                daftarMatkul[i] = daftarMatkul[j];
+                daftarMatkul[j] = temp;
             }
         }
     }
@@ -60,14 +83,14 @@ void sortingNilai(bool ascending) {
 }
 
 void cariMatkul() {
-    string dicari;
+    char dicari[PANJANG_NAMA];
     cout << "Masukkan nama matkul yang dicari: ";
     cin.ignore();
-    getline(cin, dicari);
+    cin.getline(dicari, PANJANG_NAMA);
 
     bool ditemukan = false;
     for (int i = 0; i < jumlahMatkul; i++) {
-        if (daftarMatkul[i].nama == dicari) {
+        if (bandingkanString(daftarMatkul[i].nama, dicari) == 0) {
             cout << "Ditemukan: " << daftarMatkul[i].nama
                  << " | SKS: " << daftarMatkul[i].sks
                  << " | Nilai: " << daftarMatkul[i].nilai << "\n";
@@ -90,7 +113,8 @@ void simpanKRSkeFile() {
 
     file << "=== KARTU RENCANA STUDI ===\n";
     for (int i = 0; i < jumlahMatkul; i++) {
-        file << daftarMatkul[i].nama << " | SKS: " << daftarMatkul[i].sks << " | Nilai: " << daftarMatkul[i].nilai << "\n";
+        file << daftarMatkul[i].nama << " | SKS: " << daftarMatkul[i].sks
+             << " | Nilai: " << daftarMatkul[i].nilai << "\n";
     }
     file.close();
     cout << "KRS berhasil disimpan ke file krs.txt\n";
@@ -103,8 +127,8 @@ void lihatKRSdariFile() {
         return;
     }
 
-    string baris;
-    while (getline(file, baris)) {
+    char baris[200];
+    while (file.getline(baris, 200)) {
         cout << baris << "\n";
     }
     file.close();
@@ -144,3 +168,4 @@ int main() {
 
     return 0;
 }
+
