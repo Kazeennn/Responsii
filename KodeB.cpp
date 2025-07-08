@@ -1,20 +1,40 @@
 #include <iostream>
-#include <string>
 #include <fstream>
-
 using namespace std;
 
 const int MAKS_SISWA = 100;
 const int MAKS_MAPEL = 10;
+const int PANJANG_NAMA = 50;
 
 struct Siswa {
-    string nama;
+    char nama[PANJANG_NAMA];
     int nilai[MAKS_MAPEL];
 };
 
 Siswa daftarSiswa[MAKS_SISWA];
-string namaMapel[MAKS_MAPEL];
+char namaMapel[MAKS_MAPEL][PANJANG_NAMA];
 int jumlahSiswa = 0, jumlahMapel = 0;
+
+// Fungsi untuk menyalin string (pengganti strcpy)
+void salinString(char* dest, const char* src) {
+    int i = 0;
+    while (src[i] != '\0') {
+        dest[i] = src[i];
+        i++;
+    }
+    dest[i] = '\0';
+}
+
+// Fungsi untuk membandingkan string (pengganti strcmp)
+int bandingkanString(const char* a, const char* b) {
+    int i = 0;
+    while (a[i] != '\0' && b[i] != '\0') {
+        if (a[i] != b[i])
+            return a[i] - b[i];
+        i++;
+    }
+    return a[i] - b[i];
+}
 
 void inputMapel() {
     cout << "Masukkan jumlah mata pelajaran: ";
@@ -22,7 +42,7 @@ void inputMapel() {
     cin.ignore();
     for (int i = 0; i < jumlahMapel; i++) {
         cout << "Nama mapel ke-" << i + 1 << ": ";
-        getline(cin, namaMapel[i]);
+        cin.getline(namaMapel[i], PANJANG_NAMA);
     }
 }
 
@@ -34,7 +54,7 @@ void tambahDataSiswa() {
 
     cin.ignore();
     cout << "Masukkan nama siswa: ";
-    getline(cin, daftarSiswa[jumlahSiswa].nama);
+    cin.getline(daftarSiswa[jumlahSiswa].nama, PANJANG_NAMA);
 
     for (int i = 0; i < jumlahMapel; i++) {
         cout << "Nilai " << namaMapel[i] << ": ";
@@ -60,18 +80,18 @@ void tampilkanData() {
 void statistikMapel() {
     for (int i = 0; i < jumlahMapel; i++) {
         int total = 0, max = -1, min = 101;
-        string siswaMax, siswaMin;
+        char siswaMax[PANJANG_NAMA], siswaMin[PANJANG_NAMA];
 
         for (int j = 0; j < jumlahSiswa; j++) {
             int nilai = daftarSiswa[j].nilai[i];
             total += nilai;
             if (nilai > max) {
                 max = nilai;
-                siswaMax = daftarSiswa[j].nama;
+                salinString(siswaMax, daftarSiswa[j].nama);
             }
             if (nilai < min) {
                 min = nilai;
-                siswaMin = daftarSiswa[j].nama;
+                salinString(siswaMin, daftarSiswa[j].nama);
             }
         }
 
@@ -97,7 +117,7 @@ void histogramSimulasi() {
             else rentang[4]++;
         }
 
-        string label[5] = {"<60", "60-69", "70-79", "80-89", "90-100"};
+        const char* label[5] = {"<60", "60-69", "70-79", "80-89", "90-100"};
         for (int k = 0; k < 5; k++) {
             cout << label[k] << ": ";
             for (int x = 0; x < rentang[k]; x++) cout << "*";
@@ -137,18 +157,18 @@ void laporanSimulasi() {
 
     for (int i = 0; i < jumlahMapel; i++) {
         int total = 0, max = -1, min = 101;
-        string siswaMax, siswaMin;
+        char siswaMax[PANJANG_NAMA], siswaMin[PANJANG_NAMA];
 
         for (int j = 0; j < jumlahSiswa; j++) {
             int nilai = daftarSiswa[j].nilai[i];
             total += nilai;
             if (nilai > max) {
                 max = nilai;
-                siswaMax = daftarSiswa[j].nama;
+                salinString(siswaMax, daftarSiswa[j].nama);
             }
             if (nilai < min) {
                 min = nilai;
-                siswaMin = daftarSiswa[j].nama;
+                salinString(siswaMin, daftarSiswa[j].nama);
             }
         }
 
@@ -191,3 +211,4 @@ int main() {
 
     return 0;
 }
+
