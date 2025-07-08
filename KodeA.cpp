@@ -1,15 +1,35 @@
 #include <iostream>
-#include <string>
-#include <fstream> // <=== Tambahan penting
+#include <fstream>
 using namespace std;
 
 const int MAKS_BARANG = 100;
 
+// Fungsi manual strcmp (mengembalikan 0 jika sama)
+int bandingkanString(const char* a, const char* b) {
+    int i = 0;
+    while (a[i] != '\0' && b[i] != '\0') {
+        if (a[i] != b[i])
+            return a[i] - b[i];
+        i++;
+    }
+    return a[i] - b[i];
+}
+
+// Fungsi manual strcpy
+void salinString(char* dest, const char* src) {
+    int i = 0;
+    while (src[i] != '\0') {
+        dest[i] = src[i];
+        i++;
+    }
+    dest[i] = '\0';
+}
+
 struct Barang {
-    string nama;
+    char nama[50];
     int harga;
     int stok;
-    string kategori;
+    char kategori[50];
 };
 
 Barang daftarBarang[MAKS_BARANG];
@@ -23,14 +43,14 @@ void tambahBarang() {
 
     cout << "Masukkan nama barang: ";
     cin.ignore();
-    getline(cin, daftarBarang[jumlahBarang].nama);
+    cin.getline(daftarBarang[jumlahBarang].nama, 50);
     cout << "Masukkan harga: ";
     cin >> daftarBarang[jumlahBarang].harga;
     cout << "Masukkan stok: ";
     cin >> daftarBarang[jumlahBarang].stok;
     cin.ignore();
     cout << "Masukkan kategori: ";
-    getline(cin, daftarBarang[jumlahBarang].kategori);
+    cin.getline(daftarBarang[jumlahBarang].kategori, 50);
 
     jumlahBarang++;
     cout << "Barang berhasil ditambahkan!\n";
@@ -57,14 +77,14 @@ void cariBarang() {
         return;
     }
 
-    string keyword;
+    char keyword[50];
     cout << "Masukkan nama barang yang dicari: ";
     cin.ignore();
-    getline(cin, keyword);
+    cin.getline(keyword, 50);
 
     bool ditemukan = false;
     for (int i = 0; i < jumlahBarang; i++) {
-        if (daftarBarang[i].nama == keyword) {
+        if (bandingkanString(daftarBarang[i].nama, keyword) == 0) {
             cout << "Ditemukan: " << daftarBarang[i].nama
                  << " | Harga: " << daftarBarang[i].harga
                  << " | Stok: " << daftarBarang[i].stok
@@ -80,22 +100,22 @@ void cariBarang() {
 }
 
 void editBarang() {
-    string namaCari;
+    char namaCari[50];
     cout << "Masukkan nama barang yang ingin diubah: ";
     cin.ignore();
-    getline(cin, namaCari);
+    cin.getline(namaCari, 50);
 
     for (int i = 0; i < jumlahBarang; i++) {
-        if (daftarBarang[i].nama == namaCari) {
+        if (bandingkanString(daftarBarang[i].nama, namaCari) == 0) {
             cout << "Masukkan nama baru: ";
-            getline(cin, daftarBarang[i].nama);
+            cin.getline(daftarBarang[i].nama, 50);
             cout << "Masukkan harga baru: ";
             cin >> daftarBarang[i].harga;
             cout << "Masukkan stok baru: ";
             cin >> daftarBarang[i].stok;
             cin.ignore();
             cout << "Masukkan kategori baru: ";
-            getline(cin, daftarBarang[i].kategori);
+            cin.getline(daftarBarang[i].kategori, 50);
             cout << "Barang berhasil diubah.\n";
             return;
         }
@@ -123,11 +143,11 @@ void urutkanBarang() {
             bool tukar = false;
             switch (pilihanSort) {
                 case 1:
-                    if (daftarBarang[j].nama > daftarBarang[j + 1].nama)
+                    if (bandingkanString(daftarBarang[j].nama, daftarBarang[j + 1].nama) > 0)
                         tukar = true;
                     break;
                 case 2:
-                    if (daftarBarang[j].kategori > daftarBarang[j + 1].kategori)
+                    if (bandingkanString(daftarBarang[j].kategori, daftarBarang[j + 1].kategori) > 0)
                         tukar = true;
                     break;
                 case 3:
@@ -201,3 +221,4 @@ int main() {
 
     return 0;
 }
+
